@@ -1,0 +1,25 @@
+package com.sample
+
+import java.awt.*;
+import javax.swing.*; 
+import com.sample.DroolsTest.Gra;
+import com.sample.Frame;
+
+rule "Init"
+    when      
+    	f : Frame()   	
+    then
+        insert(new Gra("party game", "Zombi Dice"));
+        insert(new Gra("party game", "King of Tokyo"));
+    	JLabel l1 = new JLabel("What type of games are you looking for?");
+    	Checkbox check1 = new Checkbox("Party Game");
+        Checkbox check2 = new Checkbox("Horror Game");
+        Checkbox check3 = new Checkbox("WarGame");
+    	f.add(check1, BorderLayout.LINE_START);
+        f.add(check2, BorderLayout.CENTER);
+        f.add(l1, BorderLayout.NORTH);
+        f.add(check3, BorderLayout.EAST);
+        f.setVisible(true);
+        
+end
+
