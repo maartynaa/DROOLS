@@ -5,7 +5,12 @@ import javax.swing.*;
 import com.sample.DroolsTest.Gra;
 import com.sample.Frame;
 
-insert(new Gra("party game", "Zombi Dice"));
+
+rule "Init"
+    when      
+    	f : Frame()   	
+    then
+	insert(new Gra("party game", "Zombi Dice"));
         insert(new Gra("party game", "King of Tokyo"));
         insert(new Gra("party game", "Coup"));
         insert(new Gra("party game", "The Resistance"));
