@@ -22,8 +22,10 @@ public class DroolsTest {
 	        KieServices ks = KieServices.Factory.get();
     	    KieContainer kContainer = ks.getKieClasspathContainer();
         	KieSession kSession = kContainer.newKieSession("ksession-rules");
-        	Frame frame = new Frame(null);
+        	Frame frame = new Frame();
+        	Message message = new Message(null);
         	kSession.insert(frame);
+        	kSession.insert(message);
         	
             kSession.fireAllRules();
         } catch (Throwable t) {

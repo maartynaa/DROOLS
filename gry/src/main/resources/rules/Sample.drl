@@ -11,25 +11,8 @@ global String a;
 
 rule "Init"
     when   
-    	f : Frame()     	
+    	f : Frame() &&  m : Message( mes==null )
     then
-        insert(new Gra("party game", "Zombi Dice"));
-        insert(new Gra("party game", "King of Tokyo"));
-        insert(new Gra("party game", "Coup"));
-        insert(new Gra("party game", "The Resistance"));
-        insert(new Gra("party game", "Apples to Apples"));
-        insert(new Gra("party game", "Dixit"));
-        insert(new Gra("party game", "Hanabi"));
-        insert(new Gra("party game", "Wits & Wagers"));
-        insert(new Gra("horror game", "City of Horror"));
-        insert(new Gra("horror game", "Zombicide"));
-        insert(new Gra("horror game", "Last Night od Earth"));
-        insert(new Gra("horror game", "Manslons of Madness"));
-        insert(new Gra("horror game", "Arkham Horror"));
-        insert(new Gra("horror game", "Elder Sign"));
-        insert(new Gra("horror game", "ResidentEvil Deckbuilding Game"));
-        insert(new Gra("horror game", "Nightfall"));
-        insert(new Gra("horror game", "Betrayal at House on the Hill"));
     	JLabel l1 = new JLabel("What type of games are you looking for?");
     	JRadioButton rb1 = new JRadioButton("Party Game");
     	JRadioButton rb2 = new JRadioButton("Horror Game");
@@ -39,29 +22,93 @@ rule "Init"
 		g.add(rb1);
 		g.add(rb2);
 		g.add(rb3);
+		p.add(l1, BorderLayout.NORTH);
 		p.add(rb1);
 		p.add(rb2);
 		p.add(rb3);
-		f.add(p, BorderLayout.CENTER);   
-		f.add(l1, BorderLayout.NORTH);
+		f.add(p, BorderLayout.CENTER);   		
         f.setVisible(true);       
-        f.Action3(rb1, rb2, rb3, "Party Game", "Horror Game", "Wargame", g);  
-        System.out.println(f.getOdp()); 
-        insert(new Message(f.getOdp()));         
-end
-
-rule "Wargame"
-    when   
-    	m : Message( mes=="Wargame" )     	
-    then
-    	System.out.println("ghjk");
+        f.Action3(rb1, rb2, rb3, "Party Game", "Horror Game", "Wargame", g);
+        System.out.println(f.getOdp() + "Init"); 
+        m.setMes(f.getOdp());
+        update(m);
+        update(f);
+            
 end
 
 rule "Party game"
     when   
     	m : Message( mes=="Party Game" )     	
     then
-    	System.out.println("ertyuio");
+    	Frame f = new Frame();
+    	JLabel l1 = new JLabel("Are you playing with Geeks?");
+    	JRadioButton rb4 = new JRadioButton("Yes");
+    	JRadioButton rb5 = new JRadioButton("No");
+		JPanel p = new JPanel();
+		ButtonGroup g = new ButtonGroup();
+		g.add(rb4);
+		g.add(rb5);
+		p.add(l1, BorderLayout.NORTH);
+		p.add(rb4);
+		p.add(rb5);
+		f.add(p, BorderLayout.CENTER);   
+        f.setVisible(true);   
+        f.Action2(rb4, rb5, "Yes with Geeks", "No with Geeks", g); 
+		m.setMes(f.getOdp());
+        update(m);          
+end
+
+rule "Yes with Geeks"
+    when   
+    	m : Message( mes=="Yes with Geeks" )     	
+    then
+    	Frame f = new Frame();
+    	JLabel l1 = new JLabel("Rolling dice or a bluffing game?");
+    	JRadioButton rb4 = new JRadioButton("Dice");
+    	JRadioButton rb5 = new JRadioButton("Bluffing");
+		JPanel p = new JPanel();
+		ButtonGroup g = new ButtonGroup();
+		g.add(rb4);
+		g.add(rb5);
+		p.add(l1, BorderLayout.NORTH);
+		p.add(rb4);
+		p.add(rb5);
+		f.add(p, BorderLayout.CENTER);   
+        f.setVisible(true);   
+        f.Action2(rb4, rb5, "Dice", "Bluffing", g); 
+		m.setMes(f.getOdp());
+        update(m);          
+end
+
+rule "No with Geeks"
+    when   
+    	m : Message( mes=="No with Geeks" )     	
+    then
+    	Frame f = new Frame();
+    	JLabel l1 = new JLabel("Do you like trivia?");
+    	JRadioButton rb4 = new JRadioButton("Yes");
+    	JRadioButton rb5 = new JRadioButton("No");
+		JPanel p = new JPanel();
+		ButtonGroup g = new ButtonGroup();
+		g.add(rb4);
+		g.add(rb5);
+		p.add(l1, BorderLayout.NORTH);
+		p.add(rb4);
+		p.add(rb5);
+		f.add(p, BorderLayout.CENTER);   
+        f.setVisible(true);   
+        f.Action2(rb4, rb5, "Yes like trivia", "No dont like trivia ", g); 
+		m.setMes(f.getOdp());
+        update(m);          
+end
+
+
+
+rule "Wargame"
+    when   
+    	f : Frame() && m : Message( mes=="Wargame" )     	
+    then
+    	System.out.println("ghjk");
 end
 
 rule "Horror game"

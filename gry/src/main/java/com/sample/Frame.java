@@ -14,11 +14,11 @@ public class Frame extends JFrame {
 	 */
 	
 	JButton btnOk;
-	private String odp;
+	private String odp=null;
 	boolean pom = true;
 	
 	
-	public Frame(String odp) {
+	public Frame() {
 		setBounds(100, 100, 450, 300);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -31,9 +31,6 @@ public class Frame extends JFrame {
 		
 		btnOk.setFont(new Font("Tahoma", Font.BOLD, 16));
 		getContentPane().add(btnOk, BorderLayout.SOUTH);
-		
-		this.odp = odp;
-
 	}
 	
 	public void Action3(
@@ -51,10 +48,31 @@ public class Frame extends JFrame {
 				setOdp(rev);
 				pom = false;
 			}
+			
 		});
 		 
 		}
 		
+	}
+	
+	
+	public void Action2(
+			JRadioButton r1, JRadioButton r2, String a, String b, ButtonGroup g) {
+		
+		pom = true;
+		while(pom == true) {
+		 btnOk.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				r1.setActionCommand(a);
+				r2.setActionCommand(b);
+				String rev = g.getSelection().getActionCommand();	
+				setOdp(rev);
+				pom = false;
+			}
+		});
+		 
+		}
 	}
 
 	
