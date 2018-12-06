@@ -2,24 +2,73 @@ package com.sample
 
 import java.awt.*;
 import javax.swing.*; 
+import java.awt.event.ActionEvent;
 import com.sample.DroolsTest.Gra;
+import com.sample.DroolsTest.Message;
 import com.sample.Frame;
+global String a;
+
 
 rule "Init"
-    when      
-    	f : Frame()   	
+    when   
+    	f : Frame()     	
     then
         insert(new Gra("party game", "Zombi Dice"));
         insert(new Gra("party game", "King of Tokyo"));
+        insert(new Gra("party game", "Coup"));
+        insert(new Gra("party game", "The Resistance"));
+        insert(new Gra("party game", "Apples to Apples"));
+        insert(new Gra("party game", "Dixit"));
+        insert(new Gra("party game", "Hanabi"));
+        insert(new Gra("party game", "Wits & Wagers"));
+        insert(new Gra("horror game", "City of Horror"));
+        insert(new Gra("horror game", "Zombicide"));
+        insert(new Gra("horror game", "Last Night od Earth"));
+        insert(new Gra("horror game", "Manslons of Madness"));
+        insert(new Gra("horror game", "Arkham Horror"));
+        insert(new Gra("horror game", "Elder Sign"));
+        insert(new Gra("horror game", "ResidentEvil Deckbuilding Game"));
+        insert(new Gra("horror game", "Nightfall"));
+        insert(new Gra("horror game", "Betrayal at House on the Hill"));
     	JLabel l1 = new JLabel("What type of games are you looking for?");
-    	Checkbox check1 = new Checkbox("Party Game");
-        Checkbox check2 = new Checkbox("Horror Game");
-        Checkbox check3 = new Checkbox("WarGame");
-    	f.add(check1, BorderLayout.LINE_START);
-        f.add(check2, BorderLayout.CENTER);
-        f.add(l1, BorderLayout.NORTH);
-        f.add(check3, BorderLayout.EAST);
-        f.setVisible(true);
-        
+    	JRadioButton rb1 = new JRadioButton("Party Game");
+    	JRadioButton rb2 = new JRadioButton("Horror Game");
+    	JRadioButton rb3 = new JRadioButton("Wargame");
+		JPanel p = new JPanel();
+		ButtonGroup g = new ButtonGroup();
+		g.add(rb1);
+		g.add(rb2);
+		g.add(rb3);
+		p.add(rb1);
+		p.add(rb2);
+		p.add(rb3);
+		f.add(p, BorderLayout.CENTER);   
+		f.add(l1, BorderLayout.NORTH);
+        f.setVisible(true);       
+        f.Action3(rb1, rb2, rb3, "Party Game", "Horror Game", "Wargame", g);  
+        System.out.println(f.getOdp()); 
+        insert(new Message(f.getOdp()));         
 end
+
+rule "Wargame"
+    when   
+    	m : Message( mes=="Wargame" )     	
+    then
+    	System.out.println("ghjk");
+end
+
+rule "Party game"
+    when   
+    	m : Message( mes=="Party Game" )     	
+    then
+    	System.out.println("ertyuio");
+end
+
+rule "Horror game"
+    when   
+    	m : Message( mes=="Horror Game" )     	
+    then
+    	System.out.println("dfghjk");
+end
+
 

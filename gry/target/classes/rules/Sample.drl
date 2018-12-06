@@ -2,15 +2,18 @@ package com.sample
 
 import java.awt.*;
 import javax.swing.*; 
+import java.awt.event.ActionEvent;
 import com.sample.DroolsTest.Gra;
+import com.sample.DroolsTest.Message;
 import com.sample.Frame;
+global String a;
 
 
 rule "Init"
-    when      
-    	f : Frame()   	
+    when   
+    	f : Frame()     	
     then
-	insert(new Gra("party game", "Zombi Dice"));
+        insert(new Gra("party game", "Zombi Dice"));
         insert(new Gra("party game", "King of Tokyo"));
         insert(new Gra("party game", "Coup"));
         insert(new Gra("party game", "The Resistance"));
@@ -40,7 +43,32 @@ rule "Init"
 		p.add(rb2);
 		p.add(rb3);
 		f.add(p, BorderLayout.CENTER);   
-		f.add(l1, BorderLayout.NORTH);	
-        f.setVisible(true);        
+		f.add(l1, BorderLayout.NORTH);
+        f.setVisible(true);       
+        f.Action3(rb1, rb2, rb3, "Party Game", "Horror Game", "Wargame", g);  
+        System.out.println(f.getOdp()); 
+        insert(new Message(f.getOdp()));         
 end
+
+rule "Wargame"
+    when   
+    	m : Message( mes=="Wargame" )     	
+    then
+    	System.out.println("ghjk");
+end
+
+rule "Party game"
+    when   
+    	m : Message( mes=="Party Game" )     	
+    then
+    	System.out.println("ertyuio");
+end
+
+rule "Horror game"
+    when   
+    	m : Message( mes=="Horror Game" )     	
+    then
+    	System.out.println("dfghjk");
+end
+
 
