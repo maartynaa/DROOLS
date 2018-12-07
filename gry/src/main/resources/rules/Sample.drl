@@ -2,35 +2,36 @@ package com.sample
 
 import javax.swing.*;
 import org.kie.api.runtime.*;
+import java.util.ArrayList;
 
 global JFrame frame;
 
 declare enum Question
-    GAME("What type of games are you looking for?", new String[]{"Party Game", "Horror Game", "Wargame"}),
-      PARTY_GAME("Are you playing with Geeks?", new String[]{"Yes", "No"}),
-        YES_WITH_GEEKS("Rolling dice or a bluffing game?", new String[]{"Dice", "Bluffing"}),
-          DICE("Are you a zombie or a giant monster?",new String[]{"Zombie", "Monster"}),
-          BLUFFING("Cooperative or competitive?",new String[]{"Cooperative", "Competitive"}),
-        NO_WITH_GEEKS("Do you like trivia?", new String[]{"Yes", "No"}),
-          NO_TRIVIA("How about something creative", new String[]{"Sure", "Nope"}),
-            CREATIVE("Working with words or pictures", new String[]{"Words", "Pictures"}),
-      HORROR_GAME("What is you favorite monster?", new String[]{"Zombies", "Cthulhu",  "Classic Movie Monsters"}),
-      WARGAME("For how many players?", new String[]{"2 or more", "Just me"}),
-        JUST_ME("What do you prefer?", new String[]{"Historic Battles", "Modern Air Support", "Science Fiction"}),
-        TWO_OR_MORE("Do you have any wargaming experience?", new String[]{"It's new to me", "Yes"}),
-          WARGAMING_EXP_YES("Want to command Roman legions?", new String[]{"Yes", "No"}),
-            ROMAN_LEGIONS_NO("Lead 19th Century battle lines?", new String[] {"Yes", "No"}),
-              BATTLE_LINES_NO("How about World War II?", new String[] {"Yes", "No"}),
-                WW2_YES("Card- or dice- driven combat?", new String[] {"roll roll roll", "shuffle shuffle"}),
-                WW2_NO("Modern Warfare, then?", new String[] {"Yes, I like the immediacy", "No, I'm tired of real wars"}),
-                  MODERN_WARFARE_NO("Science fiction or alternate history?", new String[] {"Alt-History", "Science fiction"}),
-                    WAR_ALT_HISTORY("Tactical miniatures or large-scale startegy?", new String[] {"Strategic", "Tactical"}),
-                    WAR_SCIENCE_FICTION("Space ships or giant robots?", new String[] {"Ships!", "Mechs!"}),
-          WARGAMING_EXP_NO("Are you a fan of Risk?", new String[]{"Yes", "No"}),
-            RISK_FAN_NO("World history or high fantasy?", new String[]{"History", "Fantasy"});
+    GAME("What type of games are you looking for?", ["Party Game", "Horror Game", "Wargame"]),
+      PARTY_GAME("Are you playing with Geeks?", ["Yes", "No"]),
+        YES_WITH_GEEKS("Rolling dice or a bluffing game?", ["Dice", "Bluffing"]),
+          DICE("Are you a zombie or a giant monster?", ["Zombie", "Monster"]),
+          BLUFFING("Cooperative or competitive?", ["Cooperative", "Competitive"]),
+        NO_WITH_GEEKS("Do you like trivia?", ["Yes", "No"]),
+          NO_TRIVIA("How about something creative", ["Sure", "Nope"]),
+            CREATIVE("Working with words or pictures", ["Words", "Pictures"]),
+      HORROR_GAME("What is you favorite monster?", ["Zombies", "Cthulhu",  "Classic Movie Monsters"]),
+      WARGAME("For how many players?", ["2 or more", "Just me"]),
+        JUST_ME("What do you prefer?", ["Historic Battles", "Modern Air Support", "Science Fiction"]),
+        TWO_OR_MORE("Do you have any wargaming experience?", ["It's new to me", "Yes"]),
+          WARGAMING_EXP_YES("Want to command Roman legions?", ["Yes", "No"]),
+            ROMAN_LEGIONS_NO("Lead 19th Century battle lines?", ["Yes", "No"]),
+              BATTLE_LINES_NO("How about World War II?", ["Yes", "No"]),
+                WW2_YES("Card- or dice- driven combat?", ["roll roll roll", "shuffle shuffle"]),
+                WW2_NO("Modern Warfare, then?", ["Yes, I like the immediacy", "No, I'm tired of real wars"]),
+                  MODERN_WARFARE_NO("Science fiction or alternate history?", ["Alt-History", "Science fiction"]),
+                    WAR_ALT_HISTORY("Tactical miniatures or large-scale startegy?", ["Strategic", "Tactical"]),
+                    WAR_SCIENCE_FICTION("Space ships or giant robots?", ["Ships!", "Mechs!"]),
+          WARGAMING_EXP_NO("Are you a fan of Risk?", ["Yes", "No"]),
+            RISK_FAN_NO("World history or high fantasy?", ["History", "Fantasy"]);
 
     text : String
-    options : String[]
+    options : ArrayList
 end
 
 declare Answer
@@ -47,11 +48,11 @@ rule "asker"
 when
 	q: Question()
 then
-	String[] options = q.getOptions();
+	Object[] options = q.getOptions().toArray();
     int ans = JOptionPane.showOptionDialog(frame, q.getText(), "", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, 1);
             
     if(ans != JOptionPane.CLOSED_OPTION) {
-    	Answer answer = new Answer(q, options[ans]);
+    	Answer answer = new Answer(q, (String)options[ans]);
     	insert(answer);
     }
 	
