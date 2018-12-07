@@ -14,18 +14,20 @@ declare enum Question
         NO_WITH_GEEKS("Do you like trivia?", new String[]{"Yes", "No"}),
           NO_TRIVIA("How about something creative", new String[]{"Sure", "Nope"}),
             CREATIVE("Working with words or pictures", new String[]{"Words", "Pictures"}),
-          
-        
       HORROR_GAME("What is you favorite monster?", new String[]{"Zombies", "Cthulhu",  "Classic Movie Monsters"}),
-      WARGAME("For how many players?", new String[]{"2 or more", "just me"}),
+      WARGAME("For how many players?", new String[]{"2 or more", "Just me"}),
         JUST_ME("What do you prefer?", new String[]{"Historic Battles", "Modern Air Support", "Science Fiction"}),
         TWO_OR_MORE("Do you have any wargaming experience?", new String[]{"It's new to me", "Yes"}),
           WARGAMING_EXP_YES("Want to command Roman legions?", new String[]{"Yes", "No"}),
-            
+            ROMAN_LEGIONS_NO("Lead 19th Century battle lines?", new String[] {"Yes", "No"}),
+              BATTLE_LINES_NO("How about World War II?", new String[] {"Yes", "No"}),
+                WW2_YES("Card- or dice- driven combat?", new String[] {"roll roll roll", "shuffle shuffle"}),
+                WW2_NO("Modern Warfare, then?", new String[] {"Yes, I like the immediacy", "No, I'm tired of real wars"}),
+                  MODERN_WARFARE_NO("Science fiction or alternate history?", new String[] {"Alt-History", "Science fiction"}),
+                    WAR_ALT_HISTORY("Tactical miniatures or large-scale startegy?", new String[] {"Strategic", "Tactical"}),
+                    WAR_SCIENCE_FICTION("Space ships or giant robots?", new String[] {"Ships!", "Mechs!"}),
           WARGAMING_EXP_NO("Are you a fan of Risk?", new String[]{"Yes", "No"}),
             RISK_FAN_NO("World history or high fantasy?", new String[]{"History", "Fantasy"});
-      
-    
 
     text : String
     options : String[]
@@ -36,47 +38,65 @@ declare Answer
     choice : String
 end
 
-// ********************** FUNCTIONS *********************
+declare Result
+	text: String
+end
+
+//UI FUNCTIONS
+
 function void ask(JFrame frame, KieRuntime krt, Question question) {
     String[] options = question.getOptions();
     int answerVal = JOptionPane.showOptionDialog(frame, question.getText(), "", JOptionPane.YES_NO_CANCEL_OPTION,
             JOptionPane.QUESTION_MESSAGE, null, options, 1);
+            
+    if(answerVal == -1) return;
     Answer answer = new Answer(question);
     answer.setChoice(options[answerVal]);
     krt.insert(answer);
 }
 
-function void showResult(JFrame frame, String movieName) {
-    JOptionPane.showMessageDialog(frame, movieName);
-}
+//SUPPORT RULES
+rule "asker"
+when
+	q: Question()
+then
+	ask(frame, kcontext.getKieRuntime(), q);
+end
+
+rule "shower"
+when
+	r: Result()
+then
+	JOptionPane.showMessageDialog(frame, r.getText());
+end
 
  
-// *********************** RULES ***********************
+//DECISION RULES
 //Type of game
 rule "init"
 then
-    ask(frame, kcontext.getKieRuntime(), Question.GAME);
+    insert(Question.GAME);
 end
 
 rule "game - party game"
 when
     Answer(question == Question.GAME, choice == "Party Game")
 then
-   ask(frame, kcontext.getKieRuntime(), Question.PARTY_GAME);
+   insert(Question.PARTY_GAME);
 end
 
 rule "game - horror game"
 when
     Answer(question == Question.GAME, choice == "Horror Game")
 then
-   ask(frame, kcontext.getKieRuntime(), Question.HORROR_GAME);
+   insert(Question.HORROR_GAME);
 end
 
 rule "game - wargame"
 when
     Answer(question == Question.GAME, choice == "Wargame")
 then
-   ask(frame, kcontext.getKieRuntime(), Question.WARGAME);
+   insert(Question.WARGAME);
 end
 
 //I want a party game
@@ -85,14 +105,14 @@ rule "party game - with geeks"
 when
     Answer(question == Question.PARTY_GAME, choice == "Yes")
 then
-   ask(frame, kcontext.getKieRuntime(), Question.YES_WITH_GEEKS);
+   insert(Question.YES_WITH_GEEKS);
 end
 
 rule "party game - no with geeks"
 when
     Answer(question == Question.PARTY_GAME, choice == "No")
 then
-   ask(frame, kcontext.getKieRuntime(), Question.NO_WITH_GEEKS);
+   insert(Question.NO_WITH_GEEKS);
 end
 
 //PARTY game: Dice or bluffing?
@@ -101,14 +121,14 @@ rule "dice"
 when
     Answer(question == Question.YES_WITH_GEEKS, choice == "Dice")
 then
-   ask(frame, kcontext.getKieRuntime(), Question.DICE);
+   insert(Question.DICE);
 end
 
 rule "bluffing"
 when
     Answer(question == Question.YES_WITH_GEEKS, choice == "Bluffing")
 then
-   ask(frame, kcontext.getKieRuntime(), Question.BLUFFING);
+   insert(Question.BLUFFING);
 end
 
 //PARTY game: Zombie or Monster?
@@ -117,14 +137,14 @@ rule "zombie"
 when
     Answer(question == Question.DICE, choice == "Zombie")
 then
-   showResult(frame, "Zombie Dice");
+   insert(new Result("Zombie Dice"));
 end
 
 rule "monster"
 when
     Answer(question == Question.DICE, choice == "Monster")
 then
-  	showResult(frame, "King of Tokyo");
+  	insert(new Result("King of Tokyo"));
 end
 
 //PARTY game: Cooperative or Competitive?
@@ -133,14 +153,14 @@ rule "cooperative"
 when
     Answer(question == Question.BLUFFING, choice == "Cooperative")
 then
-  showResult(frame, "The Resistance");
+  insert(new Result("The Resistance"));
 end
 
 rule "competitive"
 when
     Answer(question == Question.BLUFFING, choice == "Competitive")
 then
-   showResult(frame, "Coup");
+   insert(new Result("Coup"));
 end
 
 //PARTY game: Do you like trivia?
@@ -149,14 +169,14 @@ rule "trivia - yes"
 when
     Answer(question == Question.NO_WITH_GEEKS, choice == "Yes")
 then
-   showResult(frame, "Wits & Wagers");
+   insert(new Result("Wits & Wagers"));
 end
 
 rule "trivia - no"
 when
     Answer(question == Question.NO_WITH_GEEKS, choice == "No")
 then
-   ask(frame, kcontext.getKieRuntime(), Question.NO_TRIVIA);
+   insert(Question.NO_TRIVIA);
 end
 
 //PARTY game: How about something creative?
@@ -165,14 +185,14 @@ rule "creative - sure"
 when
     Answer(question == Question.NO_TRIVIA, choice == "Sure")
 then
-   ask(frame, kcontext.getKieRuntime(), Question.CREATIVE);
+   insert(Question.CREATIVE);
 end
 
 rule "creative - nope"
 when
     Answer(question == Question.NO_TRIVIA, choice == "Nope")
 then
-   showResult(frame, "Hanabi");
+   insert(new Result("Hanabi"));
 end
 
 //PARTY game: Working with words or pictures?
@@ -181,14 +201,14 @@ rule "words"
 when
     Answer(question == Question.CREATIVE, choice == "Words")
 then
-   showResult(frame, "Apples to Apples");
+   insert(new Result("Apples to Apples"));
 end
 
 rule "pictures"
 when
     Answer(question == Question.CREATIVE, choice == "Pictures")
 then
-   showResult(frame, "Dixit");
+   insert(new Result("Dixit"));
 end
 
 //WAR game: For how many players
@@ -197,5 +217,77 @@ rule "war game - how many players"
 when
 	Answer(question == Question.WARGAME, choice == "2 or more")
 then
-	ask(frame, kcontext.getKieRuntime(), Question.TWO_OR_MORE);
+	insert(Question.TWO_OR_MORE);
 end
+
+rule "war game - just me"
+when
+	Answer(question == Question.WARGAME, choice == "Just me")
+then
+	insert(Question.JUST_ME);
+end
+
+//WAR game: Just me choice
+
+rule "war game - historic battles"
+when
+    Answer(question == Question.JUST_ME, choice == "Historic Battles")
+then
+	insert(new Result("Field Commander Series"));
+end
+
+rule "war game - modern air support"
+when
+    Answer(question == Question.JUST_ME, choice == "Modern Air Support")
+then
+	insert(new Result("Thunderbolt: Apache Leader"));
+end
+
+rule "war game - science fiction"
+when
+	Answer(question == Question.JUST_ME, choice == "Science Fiction")
+then
+	insert(new Result("Space Infantry"));
+end
+
+//WAR game: Do you have any wargaming experience?
+
+rule "war game - has experience"
+when
+    Answer(question == Question.TWO_OR_MORE, choice == "Yes")
+then
+	insert(Question.WARGAMING_EXP_YES);
+end
+
+rule "war game - no experience"
+when
+	Answer(question == Question.TWO_OR_MORE, choice == "It's new to me")
+then
+	insert(Question.WARGAMING_EXP_NO);
+end
+
+//WAR game: Are you a fan of risk?
+
+rule "war game - risk fan"
+when
+	Answer(question == Question.WARGAMING_EXP_NO, choice == "Yes")
+then
+	insert(new Result("Risk: Legacy"));
+end
+
+rule "war game - not risk fan"
+when
+	Answer(question == Question.WARGAMING_EXP_NO, choice == "No")
+then
+	insert(Question.ROMAN_LEGIONS_NO);
+end
+
+//WAR game: Lead 19th Century battle lines?
+
+rule "war game - battle lines yes"
+when
+	Answer(question == Question.ROMAN_LEGIONS_NO, choice == "Yes")
+then
+	insert(new Result("1812: The Invasion of Canada"));
+end
+	
