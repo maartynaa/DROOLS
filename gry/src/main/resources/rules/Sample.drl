@@ -6,16 +6,25 @@ import org.kie.api.runtime.*;
 global JFrame frame;
 
 declare enum Question
-    GAME("What type of games are you looking for", new String[]{"Party Game", "Harror Game", "Wargame"}),
-    PARTY_GAME("Are you playing with Geeks", new String[]{"Yes", "No"}),
-    HORROR_GAME("What is you favorite monster", new String[]{"Zombies", "Cthulhu",  "Classic Movie Monsters"}),
-    WARGAME("For how many players", new String[]{"2 or more", "just me"}),
-    YES_WITH_GEEKS("Rolling dice or a bluffing game", new String[]{"Dice", "Bluffing"}),
-    NO_WITH_GEEKS("Do you like trivia", new String[]{"Yes", "No"}),
-    DICE("Are you a zombie or a gigant monster",new String[]{"Zombie", "Monster"}),
-    BLUFFING("Cooperative or competitive",new String[]{"Cooperative", "Competitive"}),
-    NO_TRIVIA("How about something creative", new String[]{"Sure", "Nope"}),
-    CREATIVE("Working with words or pictures", new String[]{"Words", "Pictures"});
+    GAME("What type of games are you looking for?", new String[]{"Party Game", "Horror Game", "Wargame"}),
+      PARTY_GAME("Are you playing with Geeks?", new String[]{"Yes", "No"}),
+        YES_WITH_GEEKS("Rolling dice or a bluffing game?", new String[]{"Dice", "Bluffing"}),
+          DICE("Are you a zombie or a giant monster?",new String[]{"Zombie", "Monster"}),
+          BLUFFING("Cooperative or competitive?",new String[]{"Cooperative", "Competitive"}),
+        NO_WITH_GEEKS("Do you like trivia?", new String[]{"Yes", "No"}),
+          NO_TRIVIA("How about something creative", new String[]{"Sure", "Nope"}),
+            CREATIVE("Working with words or pictures", new String[]{"Words", "Pictures"}),
+          
+        
+      HORROR_GAME("What is you favorite monster?", new String[]{"Zombies", "Cthulhu",  "Classic Movie Monsters"}),
+      WARGAME("For how many players?", new String[]{"2 or more", "just me"}),
+        JUST_ME("What do you prefer?", new String[]{"Historic Battles", "Modern Air Support", "Science Fiction"}),
+        TWO_OR_MORE("Do you have any wargaming experience?", new String[]{"It's new to me", "Yes"}),
+          WARGAMING_EXP_YES("Want to command Roman legions?", new String[]{"Yes", "No"}),
+            
+          WARGAMING_EXP_NO("Are you a fan of Risk?", new String[]{"Yes", "No"}),
+            RISK_FAN_NO("World history or high fantasy?", new String[]{"History", "Fantasy"});
+      
     
 
     text : String
@@ -43,6 +52,7 @@ function void showResult(JFrame frame, String movieName) {
 
  
 // *********************** RULES ***********************
+//Type of game
 rule "init"
 then
     ask(frame, kcontext.getKieRuntime(), Question.GAME);
@@ -50,122 +60,142 @@ end
 
 rule "game - party game"
 when
-    Answer(question == Question.GAME, choice == Question.GAME.getOptions()[0])
+    Answer(question == Question.GAME, choice == "Party Game")
 then
    ask(frame, kcontext.getKieRuntime(), Question.PARTY_GAME);
 end
 
 rule "game - horror game"
 when
-    Answer(question == Question.GAME, choice == Question.GAME.getOptions()[1])
+    Answer(question == Question.GAME, choice == "Horror Game")
 then
    ask(frame, kcontext.getKieRuntime(), Question.HORROR_GAME);
 end
 
 rule "game - wargame"
 when
-    Answer(question == Question.GAME, choice == Question.GAME.getOptions()[2])
+    Answer(question == Question.GAME, choice == "Wargame")
 then
    ask(frame, kcontext.getKieRuntime(), Question.WARGAME);
 end
 
+//I want a party game
+
 rule "party game - with geeks"
 when
-    Answer(question == Question.PARTY_GAME, choice == Question.PARTY_GAME.getOptions()[0])
+    Answer(question == Question.PARTY_GAME, choice == "Yes")
 then
    ask(frame, kcontext.getKieRuntime(), Question.YES_WITH_GEEKS);
 end
 
 rule "party game - no with geeks"
 when
-    Answer(question == Question.PARTY_GAME, choice == Question.PARTY_GAME.getOptions()[1])
+    Answer(question == Question.PARTY_GAME, choice == "No")
 then
    ask(frame, kcontext.getKieRuntime(), Question.NO_WITH_GEEKS);
 end
 
+//PARTY game: Dice or bluffing?
+
 rule "dice"
 when
-    Answer(question == Question.YES_WITH_GEEKS, choice == Question.YES_WITH_GEEKS.getOptions()[0])
+    Answer(question == Question.YES_WITH_GEEKS, choice == "Dice")
 then
    ask(frame, kcontext.getKieRuntime(), Question.DICE);
 end
 
 rule "bluffing"
 when
-    Answer(question == Question.YES_WITH_GEEKS, choice == Question.YES_WITH_GEEKS.getOptions()[1])
+    Answer(question == Question.YES_WITH_GEEKS, choice == "Bluffing")
 then
    ask(frame, kcontext.getKieRuntime(), Question.BLUFFING);
 end
 
+//PARTY game: Zombie or Monster?
+
 rule "zombie"
 when
-    Answer(question == Question.DICE, choice == Question.DICE.getOptions()[0])
+    Answer(question == Question.DICE, choice == "Zombie")
 then
    showResult(frame, "Zombie Dice");
 end
 
 rule "monster"
 when
-    Answer(question == Question.DICE, choice == Question.DICE.getOptions()[1])
+    Answer(question == Question.DICE, choice == "Monster")
 then
   	showResult(frame, "King of Tokyo");
 end
 
+//PARTY game: Cooperative or Competitive?
+
 rule "cooperative"
 when
-    Answer(question == Question.BLUFFING, choice == Question.BLUFFING.getOptions()[0])
+    Answer(question == Question.BLUFFING, choice == "Cooperative")
 then
   showResult(frame, "The Resistance");
 end
 
 rule "competitive"
 when
-    Answer(question == Question.BLUFFING, choice == Question.BLUFFING.getOptions()[1])
+    Answer(question == Question.BLUFFING, choice == "Competitive")
 then
    showResult(frame, "Coup");
 end
 
+//PARTY game: Do you like trivia?
+
 rule "trivia - yes"
 when
-    Answer(question == Question.NO_WITH_GEEKS, choice == Question.NO_WITH_GEEKS.getOptions()[0])
+    Answer(question == Question.NO_WITH_GEEKS, choice == "Yes")
 then
    showResult(frame, "Wits & Wagers");
 end
 
 rule "trivia - no"
 when
-    Answer(question == Question.NO_WITH_GEEKS, choice == Question.NO_WITH_GEEKS.getOptions()[1])
+    Answer(question == Question.NO_WITH_GEEKS, choice == "No")
 then
    ask(frame, kcontext.getKieRuntime(), Question.NO_TRIVIA);
 end
 
+//PARTY game: How about something creative?
+
 rule "creative - sure"
 when
-    Answer(question == Question.NO_TRIVIA, choice == Question.NO_TRIVIA.getOptions()[0])
+    Answer(question == Question.NO_TRIVIA, choice == "Sure")
 then
    ask(frame, kcontext.getKieRuntime(), Question.CREATIVE);
 end
 
 rule "creative - nope"
 when
-    Answer(question == Question.NO_TRIVIA, choice == Question.NO_TRIVIA.getOptions()[1])
+    Answer(question == Question.NO_TRIVIA, choice == "Nope")
 then
    showResult(frame, "Hanabi");
 end
 
+//PARTY game: Working with words or pictures?
+
 rule "words"
 when
-    Answer(question == Question.CREATIVE, choice == Question.CREATIVE.getOptions()[0])
+    Answer(question == Question.CREATIVE, choice == "Words")
 then
    showResult(frame, "Apples to Apples");
 end
 
 rule "pictures"
 when
-    Answer(question == Question.CREATIVE, choice == Question.CREATIVE.getOptions()[1])
+    Answer(question == Question.CREATIVE, choice == "Pictures")
 then
    showResult(frame, "Dixit");
 end
 
+//WAR game: For how many players
 
-
+rule "war game - how many players"
+when
+	Answer(question == Question.WARGAME, choice == "2 or more")
+then
+	ask(frame, kcontext.getKieRuntime(), Question.TWO_OR_MORE);
+end
