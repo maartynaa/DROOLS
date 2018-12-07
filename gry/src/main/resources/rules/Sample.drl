@@ -1,121 +1,171 @@
 package com.sample
 
-import java.awt.*;
-import javax.swing.*; 
-import java.awt.event.ActionEvent;
-import com.sample.DroolsTest.Gra;
-import com.sample.DroolsTest.Message;
-import com.sample.Frame;
-global String a;
+import javax.swing.*;
+import org.kie.api.runtime.*;
 
+global JFrame frame;
 
-rule "Init"
-    when   
-    	f : Frame() &&  m : Message( mes==null )
-    then
-    	JLabel l1 = new JLabel("What type of games are you looking for?");
-    	JRadioButton rb1 = new JRadioButton("Party Game");
-    	JRadioButton rb2 = new JRadioButton("Horror Game");
-    	JRadioButton rb3 = new JRadioButton("Wargame");
-		JPanel p = new JPanel();
-		ButtonGroup g = new ButtonGroup();
-		g.add(rb1);
-		g.add(rb2);
-		g.add(rb3);
-		p.add(l1, BorderLayout.NORTH);
-		p.add(rb1);
-		p.add(rb2);
-		p.add(rb3);
-		f.add(p, BorderLayout.CENTER);   		
-        f.setVisible(true);       
-        f.Action3(rb1, rb2, rb3, "Party Game", "Horror Game", "Wargame", g);
-        System.out.println(f.getOdp() + "Init"); 
-        m.setMes(f.getOdp());
-        update(m);
-        update(f);
-            
+declare enum Question
+    GAME("What type of games are you looking for", new String[]{"Party Game", "Harror Game", "Wargame"}),
+    PARTY_GAME("Are you playing with Geeks", new String[]{"Yes", "No"}),
+    HORROR_GAME("What is you favorite monster", new String[]{"Zombies", "Cthulhu",  "Classic Movie Monsters"}),
+    WARGAME("For how many players", new String[]{"2 or more", "just me"}),
+    YES_WITH_GEEKS("Rolling dice or a bluffing game", new String[]{"Dice", "Bluffing"}),
+    NO_WITH_GEEKS("Do you like trivia", new String[]{"Yes", "No"}),
+    DICE("Are you a zombie or a gigant monster",new String[]{"Zombie", "Monster"}),
+    BLUFFING("Cooperative or competitive",new String[]{"Cooperative", "Competitive"}),
+    NO_TRIVIA("How about something creative", new String[]{"Sure", "Nope"}),
+    CREATIVE("Working with words or pictures", new String[]{"Words", "Pictures"});
+    
+
+    text : String
+    options : String[]
 end
 
-rule "Party game"
-    when   
-    	m : Message( mes=="Party Game" )     	
-    then
-    	Frame f = new Frame();
-    	JLabel l1 = new JLabel("Are you playing with Geeks?");
-    	JRadioButton rb4 = new JRadioButton("Yes");
-    	JRadioButton rb5 = new JRadioButton("No");
-		JPanel p = new JPanel();
-		ButtonGroup g = new ButtonGroup();
-		g.add(rb4);
-		g.add(rb5);
-		p.add(l1, BorderLayout.NORTH);
-		p.add(rb4);
-		p.add(rb5);
-		f.add(p, BorderLayout.CENTER);   
-        f.setVisible(true);   
-        f.Action2(rb4, rb5, "Yes with Geeks", "No with Geeks", g); 
-		m.setMes(f.getOdp());
-        update(m);          
+declare Answer
+    question : Question @key
+    choice : String
 end
 
-rule "Yes with Geeks"
-    when   
-    	m : Message( mes=="Yes with Geeks" )     	
-    then
-    	Frame f = new Frame();
-    	JLabel l1 = new JLabel("Rolling dice or a bluffing game?");
-    	JRadioButton rb4 = new JRadioButton("Dice");
-    	JRadioButton rb5 = new JRadioButton("Bluffing");
-		JPanel p = new JPanel();
-		ButtonGroup g = new ButtonGroup();
-		g.add(rb4);
-		g.add(rb5);
-		p.add(l1, BorderLayout.NORTH);
-		p.add(rb4);
-		p.add(rb5);
-		f.add(p, BorderLayout.CENTER);   
-        f.setVisible(true);   
-        f.Action2(rb4, rb5, "Dice", "Bluffing", g); 
-		m.setMes(f.getOdp());
-        update(m);          
+// ********************** FUNCTIONS *********************
+function void ask(JFrame frame, KieRuntime krt, Question question) {
+    String[] options = question.getOptions();
+    int answerVal = JOptionPane.showOptionDialog(frame, question.getText(), "", JOptionPane.YES_NO_CANCEL_OPTION,
+            JOptionPane.QUESTION_MESSAGE, null, options, 1);
+    Answer answer = new Answer(question);
+    answer.setChoice(options[answerVal]);
+    krt.insert(answer);
+}
+
+function void showResult(JFrame frame, String movieName) {
+    JOptionPane.showMessageDialog(frame, movieName);
+}
+
+ 
+// *********************** RULES ***********************
+rule "init"
+then
+    ask(frame, kcontext.getKieRuntime(), Question.GAME);
 end
 
-rule "No with Geeks"
-    when   
-    	m : Message( mes=="No with Geeks" )     	
-    then
-    	Frame f = new Frame();
-    	JLabel l1 = new JLabel("Do you like trivia?");
-    	JRadioButton rb4 = new JRadioButton("Yes");
-    	JRadioButton rb5 = new JRadioButton("No");
-		JPanel p = new JPanel();
-		ButtonGroup g = new ButtonGroup();
-		g.add(rb4);
-		g.add(rb5);
-		p.add(l1, BorderLayout.NORTH);
-		p.add(rb4);
-		p.add(rb5);
-		f.add(p, BorderLayout.CENTER);   
-        f.setVisible(true);   
-        f.Action2(rb4, rb5, "Yes like trivia", "No dont like trivia ", g); 
-		m.setMes(f.getOdp());
-        update(m);          
+rule "game - party game"
+when
+    Answer(question == Question.GAME, choice == Question.GAME.getOptions()[0])
+then
+   ask(frame, kcontext.getKieRuntime(), Question.PARTY_GAME);
 end
 
-
-
-rule "Wargame"
-    when   
-    	f : Frame() && m : Message( mes=="Wargame" )     	
-    then
-    	System.out.println("ghjk");
+rule "game - horror game"
+when
+    Answer(question == Question.GAME, choice == Question.GAME.getOptions()[1])
+then
+   ask(frame, kcontext.getKieRuntime(), Question.HORROR_GAME);
 end
 
-rule "Horror game"
-    when   
-    	m : Message( mes=="Horror Game" )     	
-    then
-    	System.out.println("dfghjk");
+rule "game - wargame"
+when
+    Answer(question == Question.GAME, choice == Question.GAME.getOptions()[2])
+then
+   ask(frame, kcontext.getKieRuntime(), Question.WARGAME);
 end
+
+rule "party game - with geeks"
+when
+    Answer(question == Question.PARTY_GAME, choice == Question.PARTY_GAME.getOptions()[0])
+then
+   ask(frame, kcontext.getKieRuntime(), Question.YES_WITH_GEEKS);
+end
+
+rule "party game - no with geeks"
+when
+    Answer(question == Question.PARTY_GAME, choice == Question.PARTY_GAME.getOptions()[1])
+then
+   ask(frame, kcontext.getKieRuntime(), Question.NO_WITH_GEEKS);
+end
+
+rule "dice"
+when
+    Answer(question == Question.YES_WITH_GEEKS, choice == Question.YES_WITH_GEEKS.getOptions()[0])
+then
+   ask(frame, kcontext.getKieRuntime(), Question.DICE);
+end
+
+rule "bluffing"
+when
+    Answer(question == Question.YES_WITH_GEEKS, choice == Question.YES_WITH_GEEKS.getOptions()[1])
+then
+   ask(frame, kcontext.getKieRuntime(), Question.BLUFFING);
+end
+
+rule "zombie"
+when
+    Answer(question == Question.DICE, choice == Question.DICE.getOptions()[0])
+then
+   showResult(frame, "Zombie Dice");
+end
+
+rule "monster"
+when
+    Answer(question == Question.DICE, choice == Question.DICE.getOptions()[1])
+then
+  	showResult(frame, "King of Tokyo");
+end
+
+rule "cooperative"
+when
+    Answer(question == Question.BLUFFING, choice == Question.BLUFFING.getOptions()[0])
+then
+  showResult(frame, "The Resistance");
+end
+
+rule "competitive"
+when
+    Answer(question == Question.BLUFFING, choice == Question.BLUFFING.getOptions()[1])
+then
+   showResult(frame, "Coup");
+end
+
+rule "trivia - yes"
+when
+    Answer(question == Question.NO_WITH_GEEKS, choice == Question.NO_WITH_GEEKS.getOptions()[0])
+then
+   showResult(frame, "Wits & Wagers");
+end
+
+rule "trivia - no"
+when
+    Answer(question == Question.NO_WITH_GEEKS, choice == Question.NO_WITH_GEEKS.getOptions()[1])
+then
+   ask(frame, kcontext.getKieRuntime(), Question.NO_TRIVIA);
+end
+
+rule "creative - sure"
+when
+    Answer(question == Question.NO_TRIVIA, choice == Question.NO_TRIVIA.getOptions()[0])
+then
+   ask(frame, kcontext.getKieRuntime(), Question.CREATIVE);
+end
+
+rule "creative - nope"
+when
+    Answer(question == Question.NO_TRIVIA, choice == Question.NO_TRIVIA.getOptions()[1])
+then
+   showResult(frame, "Hanabi");
+end
+
+rule "words"
+when
+    Answer(question == Question.CREATIVE, choice == Question.CREATIVE.getOptions()[0])
+then
+   showResult(frame, "Apples to Apples");
+end
+
+rule "pictures"
+when
+    Answer(question == Question.CREATIVE, choice == Question.CREATIVE.getOptions()[1])
+then
+   showResult(frame, "Dixit");
+end
+
 
 
