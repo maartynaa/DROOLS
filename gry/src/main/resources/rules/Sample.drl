@@ -42,25 +42,19 @@ declare Result
 	text: String
 end
 
-//UI FUNCTIONS
-
-function void ask(JFrame frame, KieRuntime krt, Question question) {
-    String[] options = question.getOptions();
-    int answerVal = JOptionPane.showOptionDialog(frame, question.getText(), "", JOptionPane.YES_NO_CANCEL_OPTION,
-            JOptionPane.QUESTION_MESSAGE, null, options, 1);
-            
-    if(answerVal == -1) return;
-    Answer answer = new Answer(question);
-    answer.setChoice(options[answerVal]);
-    krt.insert(answer);
-}
-
 //SUPPORT RULES
 rule "asker"
 when
 	q: Question()
 then
-	ask(frame, kcontext.getKieRuntime(), q);
+	String[] options = q.getOptions();
+    int ans = JOptionPane.showOptionDialog(frame, q.getText(), "", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, 1);
+            
+    if(ans != JOptionPane.CLOSED_OPTION) {
+    	Answer answer = new Answer(q, options[ans]);
+    	insert(answer);
+    }
+	
 end
 
 rule "shower"
