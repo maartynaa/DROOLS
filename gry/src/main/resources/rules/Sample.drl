@@ -117,14 +117,14 @@ end
 
 //PARTY game: Dice or bluffing?
 
-rule "dice"
+rule "party game - dice"
 when
     Answer(question == Question.YES_WITH_GEEKS, choice == "Dice")
 then
    insert(Question.DICE);
 end
 
-rule "bluffing"
+rule "party game - bluffing"
 when
     Answer(question == Question.YES_WITH_GEEKS, choice == "Bluffing")
 then
@@ -133,14 +133,14 @@ end
 
 //PARTY game: Zombie or Monster?
 
-rule "zombie"
+rule "party game - zombie"
 when
     Answer(question == Question.DICE, choice == "Zombie")
 then
    insert(new Result("Zombie Dice"));
 end
 
-rule "monster"
+rule "party game - monster"
 when
     Answer(question == Question.DICE, choice == "Monster")
 then
@@ -149,14 +149,14 @@ end
 
 //PARTY game: Cooperative or Competitive?
 
-rule "cooperative"
+rule "party game - cooperative"
 when
     Answer(question == Question.BLUFFING, choice == "Cooperative")
 then
   insert(new Result("The Resistance"));
 end
 
-rule "competitive"
+rule "party game - competitive"
 when
     Answer(question == Question.BLUFFING, choice == "Competitive")
 then
@@ -165,14 +165,14 @@ end
 
 //PARTY game: Do you like trivia?
 
-rule "trivia - yes"
+rule "party game - trivia - yes"
 when
     Answer(question == Question.NO_WITH_GEEKS, choice == "Yes")
 then
    insert(new Result("Wits & Wagers"));
 end
 
-rule "trivia - no"
+rule "party game - trivia - no"
 when
     Answer(question == Question.NO_WITH_GEEKS, choice == "No")
 then
@@ -181,14 +181,14 @@ end
 
 //PARTY game: How about something creative?
 
-rule "creative - sure"
+rule "party game - creative - sure"
 when
     Answer(question == Question.NO_TRIVIA, choice == "Sure")
 then
    insert(Question.CREATIVE);
 end
 
-rule "creative - nope"
+rule "party game - creative - nope"
 when
     Answer(question == Question.NO_TRIVIA, choice == "Nope")
 then
@@ -197,14 +197,14 @@ end
 
 //PARTY game: Working with words or pictures?
 
-rule "words"
+rule "party game - words"
 when
     Answer(question == Question.CREATIVE, choice == "Words")
 then
    insert(new Result("Apples to Apples"));
 end
 
-rule "pictures"
+rule "party game - pictures"
 when
     Answer(question == Question.CREATIVE, choice == "Pictures")
 then
@@ -488,14 +488,14 @@ rule "horror game - no as the zobies"
 when
     Answer(question == Question.HUMANS, choice == "We are all humans")
 then  
-   insert(new Result("Last Night on Earth"));
+   insert(new Result("Zombicide"));
 end
 
 rule "horror game - yes as a zombies"
 when
-    Answer(question == Question.BOARD, choice == "Sure!")
+    Answer(question == Question.HUMANS, choice == "Sure!")
 then
-   insert(new Result("Zombiecide"));
+   insert(new Result("Last Night on Earth"));
 end
 
 //HORROR game: Ever wanted to play on Cthulhu side?
