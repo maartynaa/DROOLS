@@ -16,6 +16,12 @@ declare enum Question
           NO_TRIVIA("How about something creative", ["Sure", "Nope"]),
             CREATIVE("Working with words or pictures", ["Words", "Pictures"]),
       HORROR_GAME("What is you favorite monster?", ["Zombies", "Cthulhu",  "Classic Movie Monsters"]),
+      	ZOMBI("Boards or cards?", ["Board Game", "Card Game"]),
+      	  BOARD("Survival of the Fittest or Humans vs Zombies?", ["Survival of the Fittest", "Humans vs Zombies"]),
+      	    HUMANS("Does anyone want to play as the zombies", ["We are all humans", "Sure!"]),
+      	CTHULHU("Ever wanted to play on his side?", ["Maybe a little",  "No!"]),
+      	  CTHULHU_NO("An epic investigation or a gateway game?", ["I want an epic!",  "Gateway, please!"]),
+      	MONSTER("Card-based combat or a mystery?", ["I'll crash you", "I'd rather be a detective"]),
       WARGAME("For how many players?", ["2 or more", "Just me"]),
         JUST_ME("What do you prefer?", ["Historic Battles", "Modern Air Support", "Science Fiction"]),
         TWO_OR_MORE("Do you have any wargaming experience?", ["It's new to me", "Yes"]),
@@ -418,4 +424,124 @@ when
 	Answer(question == Question.WAR_SCIENCE_FICTION, choice == "Mechs!")
 then
 	insert(new Result("Battletech"));
+end
+
+//HORROR game: What is your favourite monster?
+
+rule "horror game - zombies"
+when
+    Answer(question == Question.HORROR_GAME, choice == "Zombies")
+then
+   insert(Question.ZOMBI);
+end
+
+rule "horror game - cthulhu"
+when
+    Answer(question == Question.HORROR_GAME, choice == "Cthulhu")
+then
+   insert(Question.CTHULHU);
+end
+
+rule "horror game - monster"
+when
+    Answer(question == Question.HORROR_GAME, choice == "Classic Movie Monsters")
+then
+   insert(Question.MONSTER);
+end
+
+//HORROR game: Boards or cards?
+
+rule "horror game - board"
+when
+    Answer(question == Question.ZOMBI, choice == "Board Game")
+then
+   insert(Question.BOARD);
+end
+
+rule "horror game - card"
+when
+    Answer(question == Question.ZOMBI, choice == "Card Game")
+then
+   insert(new Result("Resident Evil \n Deckbuilding Game"));
+end
+
+//HORROR game: Survival of the Fittest or Humans vs Zombies?
+
+rule "horror game - survival"
+when
+    Answer(question == Question.BOARD, choice == "Survival of the Fittest")
+then
+   
+   insert(new Result("City of Horror"));
+end
+
+rule "horror game - humans"
+when
+    Answer(question == Question.BOARD, choice == "Humans vs Zombies")
+then
+   insert(Question.HUMANS);
+end
+
+//HORROR game: Does anyone want to play as the zombies?
+
+rule "horror game - no as the zobies"
+when
+    Answer(question == Question.HUMANS, choice == "We are all humans")
+then  
+   insert(new Result("Last Night on Earth"));
+end
+
+rule "horror game - yes as a zombies"
+when
+    Answer(question == Question.BOARD, choice == "Sure!")
+then
+   insert(new Result("Zombiecide"));
+end
+
+//HORROR game: Ever wanted to play on Cthulhu side?
+
+rule "horror game - no"
+when
+    Answer(question == Question.CTHULHU, choice == "No!")
+then
+   insert(Question.CTHULHU_NO);
+end
+
+rule "horror game - yes"
+when
+    Answer(question == Question.CTHULHU, choice == "Maybe a little")
+then
+   insert(new Result("Mansions of Madness"));
+end
+
+//HORROR game: An epic investigation or a gateway game?
+
+rule "horror game - epic"
+when
+    Answer(question == Question.CTHULHU_NO, choice == "I want an epic!")
+then
+   insert(new Result("Arkham Horror"));
+end
+
+rule "horror game - gateway"
+when
+    Answer(question == Question.CTHULHU_NO, choice == "Gateway, please!")
+then
+   insert(new Result("Elder Sign"));
+end
+
+//HORROR game: Card-based combat or a mystery?
+
+rule "horror game - combat"
+when
+    Answer(question == Question.MONSTER, choice == "I'll crash you")
+then
+   insert(new Result("Nightfall"));
+end
+
+rule "horror game - mystery"
+when
+    Answer(question == Question.MONSTER, choice == "I'd rather be a detective")
+then
+   insert(new Result("Betrayal at House on the Hill"));
 end
